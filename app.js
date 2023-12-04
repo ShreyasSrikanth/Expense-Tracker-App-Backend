@@ -11,7 +11,7 @@ const signupRoute = require('./routes/signupRoute');
 
 
 app.use(cors({
-    origin:['http://127.0.0.1:5500','http://127.0.0.1:5500/SignUp/SignUp.html'],
+    origin:['http://127.0.0.1:5500','http://127.0.0.1:5500/Login/Login.html'],
     methods:['GET','POST'],
     credentials:true
 }));
