@@ -10,11 +10,11 @@ exports.postItem = (req, res, next) => {
     
     const saltround = 10;
 
-    bcrypt.hash(pass,saltround, async (err,hash) => {
+    bcrypt.hash(pass, saltround, async (err, hash) => {
         Signup.create({
             name: name,
             email: email,
-            pass:hash
+            pass: hash
         })
         .then(result => {
             res.status(200).json({ message: 'Information is successfully stored' });
@@ -25,21 +25,24 @@ exports.postItem = (req, res, next) => {
     })
 };
 
-exports.getItem = (req,res,next) =>{
-    const users = Signup.findAll({ attributes: { exclude: ['pass'] } })
-    .then(users =>{
+exports.getItem = async (req, res, next) => {
+    try {
+        const users = await Signup.findAll({ attributes: { exclude: ['pass'] } });
         res.json(users);
-    })
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to retrieve information' });
+    }
 };
 
-exports.loginUser = (req,res,next) => {
-    const { email, pass } = req.body;
+exports.loginUser = async (req, res, next) => {
+    const email = req.body.email;
+    const pass = req.body.pass;
 
+    let user = await Signup.findOne({ where: { email: email } });
+    
     try {
-        const user =  Signup.findOne({ where: { email: email } });
-
         if (user) {
-            const isMatch =  bcrypt.compare(pass, user.pass);
+            const isMatch = await bcrypt.compare(pass, user.pass);
             if (isMatch) {
                 res.status(200).json({ message: 'Login successful!' });
             } else {
@@ -47,11 +50,8 @@ exports.loginUser = (req,res,next) => {
             }
         } else {
             res.status(404).json({ message: 'Invalid email or password' });
-        }
-    } catch (error) {
+        } 
+    } catch (err) {
         res.status(500).json({ error: 'Failed to perform login' });
     }
 };
-
-    
-
