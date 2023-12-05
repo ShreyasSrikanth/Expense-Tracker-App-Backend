@@ -1,6 +1,8 @@
 const path = require('path');
 const cors = require('cors');
 const express = require('express');
+const expenseModel = require('./models/expenseModel');
+const userModel = require('./models/signupModel');
 
 const app = express();
 
@@ -20,6 +22,9 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use('/users',signupRoute);
 app.use('/expense',expenseRoute);
+
+userModel.hasMany(expenseModel);
+expenseModel.belongsTo(userModel)
 
 sequelize.sync()
   .then(res => {

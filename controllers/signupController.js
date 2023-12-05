@@ -2,6 +2,7 @@ const Signup = require('../models/signupModel');
 const { post } = require('../routes/signupRoute');
 const { where } = require('sequelize');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken')
 
 exports.postItem = (req, res, next) => {
     const name = req.body.name;
@@ -34,6 +35,11 @@ exports.getItem = async (req, res, next) => {
     }
 };
 
+function generateToken(id,name){
+    return jwt.sign({userId:id,name:name},'shreyassrikanthshreyassrikanthshreyassrikanth')
+}
+
+
 exports.loginUser = async (req, res, next) => {
     const email = req.body.email;
     const pass = req.body.pass;
@@ -44,7 +50,7 @@ exports.loginUser = async (req, res, next) => {
         if (user) {
             const isMatch = await bcrypt.compare(pass, user.pass);
             if (isMatch) {
-                res.status(200).json({ message: 'Login successful!' });
+                res.status(200).json({ message: 'Login successful!', token:generateToken(user.id,user.name) });
             } else {
                 res.status(404).json({ message: 'Invalid email or password' });
             }

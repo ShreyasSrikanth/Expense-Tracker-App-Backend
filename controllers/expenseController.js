@@ -7,10 +7,6 @@ exports.postExpense = (req, res, next) => {
     const amount = req.body.amount;
     const desc = req.body.desc;
     
-    console.log('category',category);
-    console.log('amount',amount);
-    console.log('desc',desc);
-
     Expense.create({
         category:category,
         description: desc,
@@ -26,7 +22,8 @@ exports.postExpense = (req, res, next) => {
 
 exports.getExpense = async (req, res, next) => {
     try {
-        const expenses = await Expense.findAll();
+        const expenses = await Expense.findAll({where:{UserId:req.user.userId}})
+        console.log(expenses)
         res.json(expenses);
     } catch (error) {
         res.status(500).json({ error: 'Failed to retrieve information' });
