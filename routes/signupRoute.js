@@ -8,6 +8,5 @@ Router.post('/signup',signupController.postItem);
 Router.get('/fetchusers',signupController.getItem);
 
 Router.post('/login',signupController.loginUser);
-Router.post('/storeexpense');
 
 module.exports = Router;
