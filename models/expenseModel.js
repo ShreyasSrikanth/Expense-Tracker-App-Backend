@@ -21,7 +21,7 @@ const expense = sequelize.define('Expenses',{
         primaryKey: false
     },
     amount:{
-        type:Sequelize.STRING,
+        type:Sequelize.INTEGER,
         autoIncrement : false,
         allowNull : false,
         primaryKey: false
