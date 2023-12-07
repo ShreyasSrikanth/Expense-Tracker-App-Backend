@@ -43,7 +43,6 @@ exports.updateTransactionStatus = async (req, res, next) => {
         const user = await User.findByPk(req.user.userId); 
 
         if (!user) {
-            console.log('hello')
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
