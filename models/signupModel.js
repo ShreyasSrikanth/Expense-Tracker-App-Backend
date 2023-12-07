@@ -26,6 +26,7 @@ const items = sequelize.define('User',{
         allowNull : false,
         primaryKey: false
     },
+    ispremiumuser:Sequelize.BOOLEAN
 });
 
 module.exports = items;

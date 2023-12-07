@@ -8,6 +8,7 @@ exports.postItem = (req, res, next) => {
     const name = req.body.name;
     const email = req.body.email;
     const pass = req.body.pass;
+    const ispremiumuser = req.body.ispremiumuser;
     
     const saltround = 10;
 
@@ -15,7 +16,8 @@ exports.postItem = (req, res, next) => {
         Signup.create({
             name: name,
             email: email,
-            pass: hash
+            pass: hash,
+            ispremiumuser:ispremiumuser
         })
         .then(result => {
             res.status(200).json({ message: 'Information is successfully stored' });
