@@ -30,6 +30,15 @@ exports.getExpense = async (req, res, next) => {
     }
 };
 
+exports.getAllExpense = async (req, res, next) => {
+    try {
+        const expenses = await Expense.findAll()
+        res.json(expenses);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to retrieve information' });
+    }
+};
+
 exports.deleteExpense = async (req, res, next) => {
 
     const ID = req.body.ID;

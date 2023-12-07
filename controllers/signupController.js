@@ -52,7 +52,8 @@ exports.loginUser = async (req, res, next) => {
         if (user) {
             const isMatch = await bcrypt.compare(pass, user.pass);
             if (isMatch) {
-                res.status(200).json({ message: 'Login successful!', token:generateToken(user.id,user.name) });
+                console.log(user.ispremiumuser)
+                res.status(200).json({ message: 'Login successful!', token:generateToken(user.id,user.name) , ispremiumuser: user.ispremiumuser });
             } else {
                 res.status(404).json({ message: 'Invalid email or password' });
             }
