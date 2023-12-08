@@ -45,7 +45,7 @@ exports.getAllExpense = async (req, res, next) => {
                 attributes:[]
             }],
             group:['User.id'],
-            order:['total_cost']
+            order:[['total_cost','DESC']]
         });
 
 
