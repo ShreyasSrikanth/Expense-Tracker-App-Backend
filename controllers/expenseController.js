@@ -1,6 +1,8 @@
 const Expense = require('../models/expenseModel');
+const Users = require('../models/signupModel');
 const { post } = require('../routes/signupRoute');
 const { where } = require('sequelize');
+const sequelise = require('../util/database');
 
 exports.postExpense = (req, res, next) => {
     const category = req.body.category;
@@ -32,8 +34,28 @@ exports.getExpense = async (req, res, next) => {
 
 exports.getAllExpense = async (req, res, next) => {
     try {
-        const expenses = await Expense.findAll()
-        res.json(expenses);
+        const usersWithExpenses = await Users.findAll({
+            attributes:[
+                'id',
+                'name',
+                [sequelise.fn('sum', sequelise.col('expenses.amount')), 'total_cost']
+            ],
+            include: [{
+                model: Expense,
+                attributes:[]
+            }],
+            group:['User.id'],
+            order:['total_cost']
+        });
+
+
+        // const expenses = await Expense.findAll({
+        //     attributes:['UserId',[sequelise.fn('sum', sequelise.col('expenses.amount')), 'total_cost']],
+        //     group:['UserId']
+        // })
+
+        console.log(usersWithExpenses)
+        res.json(usersWithExpenses);
     } catch (error) {
         res.status(500).json({ error: 'Failed to retrieve information' });
     }
