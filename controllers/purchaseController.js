@@ -5,8 +5,8 @@ const User = require('../models/signupModel');
 exports.premiumpurchase = (req,res,next) =>{
     try{
         var rzp = new razorpay({
-            key_id:'rzp_test_f6w5L9Ag8JTfD6',
-            key_secret:'uDgLDG0yqcYpt9CvkMmdWQVE'
+            key_id:'rzp_test_sPYSbU2yJb4naB',
+            key_secret:'Ch3HIvGuDfUy13VDGIuqQMoS'
         })
         const amount = 2500;
 

@@ -4,12 +4,21 @@ const { post } = require('../routes/signupRoute');
 const { where } = require('sequelize');
 const sequelise = require('../util/database');
 
-exports.postExpense = (req, res, next) => {
+exports.postExpense = async (req, res, next) => {
     const category = req.body.category;
     const amount = req.body.amount;
     const desc = req.body.desc;
+
+    const user = await Users.findOne({id:req.user.userId});
+    user.totalExpense += amount;
+    console.log(user.name)
+    await user.save();
+
+    if(!user){
+        res.status(500).json({message:'User doesnt exist to store the expense'});
+    } 
     
-    Expense.create({
+    await Expense.create({
         category:category,
         description: desc,
         amount: amount,
@@ -35,26 +44,15 @@ exports.getExpense = async (req, res, next) => {
 exports.getAllExpense = async (req, res, next) => {
     try {
         const usersWithExpenses = await Users.findAll({
-            attributes:[
-                'id',
-                'name',
-                [sequelise.fn('sum', sequelise.col('expenses.amount')), 'total_cost']
-            ],
-            include: [{
-                model: Expense,
-                attributes:[]
-            }],
-            group:['User.id'],
-            order:[['total_cost','DESC']]
+            attributes:['id','name','totalExpense']
         });
 
+        console.log(usersWithExpenses)
 
         // const expenses = await Expense.findAll({
         //     attributes:['UserId',[sequelise.fn('sum', sequelise.col('expenses.amount')), 'total_cost']],
         //     group:['UserId']
         // })
-
-        console.log(usersWithExpenses)
         res.json(usersWithExpenses);
     } catch (error) {
         res.status(500).json({ error: 'Failed to retrieve information' });

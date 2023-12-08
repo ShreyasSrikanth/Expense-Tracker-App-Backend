@@ -9,6 +9,7 @@ exports.postItem = (req, res, next) => {
     const email = req.body.email;
     const pass = req.body.pass;
     const ispremiumuser = req.body.ispremiumuser;
+     const totalExpense = req.body.totalExpense;
     
     const saltround = 10;
 
@@ -17,7 +18,8 @@ exports.postItem = (req, res, next) => {
             name: name,
             email: email,
             pass: hash,
-            ispremiumuser:ispremiumuser
+            ispremiumuser:ispremiumuser,
+            totalExpense:totalExpense
         })
         .then(result => {
             res.status(200).json({ message: 'Information is successfully stored' });
