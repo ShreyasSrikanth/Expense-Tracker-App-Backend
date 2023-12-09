@@ -8,7 +8,7 @@ const authUser = require('../middlewear/auth');
 Router.post('/storeexpense',authUser.authenticate,expenseController.postExpense);
 Router.get('/fetchexpense',authUser.authenticate,expenseController.getExpense);
 Router.get('/fetchAllexpense',expenseController.getAllExpense);
-Router.post('/deleteexpense',expenseController.deleteExpense);
+Router.post('/deleteexpense',authUser.authenticate,expenseController.deleteExpense);
 
 
 module.exports = Router;
