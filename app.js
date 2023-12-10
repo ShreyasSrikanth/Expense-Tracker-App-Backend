@@ -3,7 +3,8 @@ const cors = require('cors');
 const express = require('express');
 const expenseModel = require('./models/expenseModel');
 const userModel = require('./models/signupModel');
-const orderModel = require('./models/purchaseModel')
+const orderModel = require('./models/purchaseModel');
+const passwordModel = require('./models/forgotpasswordModel');
 
 const app = express();
 
@@ -12,7 +13,7 @@ const bodyParser = require('body-parser');
 const signupRoute = require('./routes/signupRoute');
 const expenseRoute = require('./routes/expenseRoute');
 const premiumRoute = require('./routes/purchaseRoute');
-
+const passwordRoute = require('./routes/forgotpasswordRoute');
 
 app.use(cors({
     origin:['http://127.0.0.1:5500','http://127.0.0.1:5500/Login/Login.html'],
@@ -23,6 +24,7 @@ app.use(cors({
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use('/users',signupRoute);
+app.use('/password',passwordRoute)
 app.use('/expense',expenseRoute);
 app.use('/premium',premiumRoute);
 
@@ -31,6 +33,9 @@ expenseModel.belongsTo(userModel);
 
 userModel.hasMany(orderModel);
 orderModel.belongsTo(userModel);
+
+userModel.hasMany(passwordModel);
+passwordModel.belongsTo(userModel);
 
 sequelize.sync()
   .then(res => {
