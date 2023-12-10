@@ -8,60 +8,67 @@ const Sib = require('sib-api-v3-sdk');
 const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 
-exports.forgotpassword = async(req,res,next) =>{
+exports.forgotpassword = async (req, res, next) => {
     const email = req.body.email;
     const userid = req.user.userId;
     const isactive = req.body.isactive;
-    
-    try{
 
-    const requestId = uuidv4()
+    try {
+        const requestId = uuidv4();
 
-    await reset.create({
-        id: requestId,
-        isactive: isactive,
-        UserId: userid,
-    });
+        await reset.create({
+            id: requestId,
+            isactive: isactive,
+            UserId: userid,
+        });
 
-    const resetLink = `http://localhost:4000/password/reset/${requestId}`;
-    
-    const client = Sib.ApiClient.instance;
+        const resetLink = `http://localhost:4000/password/reset/${requestId}`;
 
-    var apiKey = client.authentications['api-key'];
-    apiKey.apiKey = process.env.API_KEY;
-    var transEmailApi = new Sib.TransactionalEmailsApi();
+        const client = Sib.ApiClient.instance;
 
-    const sender = {
-        email: 'sshreyas567@gmail.com',
+        var apiKey = client.authentications['api-key'];
+        apiKey.apiKey = process.env.API_KEY;
+        var transEmailApi = new Sib.TransactionalEmailsApi();
+
+        const sender = {
+            email: 'sshreyas567@gmail.com',
+        }
+
+        const receivers = [
+            {
+                email: email,
+            },
+        ]
+
+        transEmailApi.sendTransacEmail({
+            sender,
+            to: receivers,
+            subject: 'Reset Your Password',
+            textContent: `{{params.role}} `,
+            htmlContent: `<h1>Reset Password</h1>
+            <a href='${resetLink}'>Click on the link to reset your password</a>`,
+            params: {
+                role: 'Developer',
+            },
+        })
+        .then((response) => {
+            if (response.messageId) {
+                res.status(200).json({ message: 'Reset email sent successfully' });
+            } else {
+                console.error('Email was not queued. Response:', response);
+                res.status(500).json({ error: 'Failed to send reset email' });
+            }
+        })
+        .catch((error) => {
+            console.error('Error sending email:', error);
+            res.status(500).json({ error: 'Failed to send reset email' });
+        });
+    } catch (err) {
+        console.error('Error creating reset request:', err);
+        res.status(500).json({ error: 'Failed to create reset request' });
     }
-
-    const receivers = [
-        {
-            email:email,
-        },
-    ]
-
-    transEmailApi.sendTransacEmail({
-        sender,
-        to: receivers,
-        subject: 'Reset Your Password',
-        textContent: `{{params.role}} `,
-        htmlContent: `<h1>Reset Password</h1>
-        <a href='${resetLink}'>Click on the link to reset your password</a>`,
-        params: {
-            role: 'Developer',
-        },
-    })
-    .then((response) => {
-        res.status(200).json({ message: 'Reset email sent successfully' });
-    })
-    .catch((error) => {
-        res.status(500).json({ error: 'Failed to send reset email' });
-    });
-} catch (err) {
-    res.status(500).json({ error: 'Failed to create reset request' });
 }
-}
+
 
 exports.resetPassword = async (req, res) => {
     const requestId = req.params.requestId;
@@ -89,15 +96,15 @@ exports.updatePassword = async (req, res) => {
     const requestId = req.body.requestId;
     const newPassword = req.body.newPassword;
 
-    console.log(requestId);
+    console.log(req.user.userId);
     console.log(newPassword);
 
     try {
         const encryptedPassword = await bcrypt.hash(newPassword, 10);
 
         await Signup.update(
-            { password: encryptedPassword },
-            { where: { id: req.user.UserId } }
+            { pass: encryptedPassword },
+            { where: { id: req.user.userId } }
         );
 
         await reset.update(
