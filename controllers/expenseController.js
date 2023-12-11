@@ -4,6 +4,11 @@ const { post } = require('../routes/signupRoute');
 const { where } = require('sequelize');
 const sequelise = require('../util/database');
 
+exports.downloadexpense = async (req,res,next) =>{
+    const expenses = await exports.getExpense(req,res,next);
+    console.log('=-=-=-=-=->',expenses);
+}
+
 exports.postExpense = async (req, res, next) => {
     const category = req.body.category;
     const amount = req.body.amount;
@@ -38,7 +43,9 @@ exports.postExpense = async (req, res, next) => {
 
 exports.getExpense = async (req, res, next) => {
     try {
+        const date = req.params.date
         const expenses = await Expense.findAll({where:{UserId:req.user.userId}})
+        console.log('========>',expenses)
         res.json(expenses);
     } catch (error) {
         res.status(500).json({ error: 'Failed to retrieve information' });
@@ -52,13 +59,8 @@ exports.getAllExpense = async (req, res, next) => {
             order:[['totalExpense','DESC']]
         });
 
-        console.log(usersWithExpenses)
-
-        // const expenses = await Expense.findAll({
-        //     attributes:['UserId',[sequelise.fn('sum', sequelise.col('expenses.amount')), 'total_cost']],
-        //     group:['UserId']
-        // })
         res.json(usersWithExpenses);
+
     } catch (error) {
         res.status(500).json({ error: 'Failed to retrieve information' });
     }
@@ -98,12 +100,5 @@ exports.deleteExpense = async (req, res, next) => {
             await t.rollback();
             res.status(500).json({ message: 'User doesnt exist to store the expense' });
         });
-    
-    
-
-    // try {
-    //     const expenses = await Expense.findAll();
-    // } catch (error) {
-    //     res.status(500).json({ error: 'Failed to retrieve information' });
-    // }
 };
+
