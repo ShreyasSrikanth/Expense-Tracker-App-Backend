@@ -7,9 +7,11 @@ const AWS = require('aws-sdk');
 require('dotenv').config();
 
 function uploadToS3(data, filename){
-    const BUCKET_NAME = 'expensetrackingapp2023';
-    const IAM_USER_KEY = 'AKIAWW642STSA6YRWSOV';
-    const IAM_USER_SECRET = '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';
+    console.log('BUCKET_NAME:', process.env.BUCKET_NAME);
+
+    const BUCKET_NAME = process.env.BUCKET_NAME;
+    const IAM_USER_KEY = process.env.IAM_USER_KEY;
+    const IAM_USER_SECRET = process.env.IAM_USER_SECRET;
 
     const s3bucket = new AWS.S3({
         accessKeyId: IAM_USER_KEY,
@@ -19,15 +21,18 @@ function uploadToS3(data, filename){
     const params = {
         Bucket: BUCKET_NAME,
         Key: filename,
-        Body: data
+        Body: data,
+        ACL: 'public-read'
     };
 
     return new Promise((resolve, reject) => {
         s3bucket.upload(params, (err, s3response) => {
             if (err) {
-                console.error('Error listing objects:', err);
+                // console.error('Error uploading to S3:', err);
+                reject(err);
             } else {
-                console.log('Success:', s3response);
+                // console.log('Success:', s3response);
+                resolve(s3response.Location);
             }
         });
     });
@@ -35,12 +40,13 @@ function uploadToS3(data, filename){
 
 exports.downloadexpense = async (req, res, next) => {
     try {
-        const expenses = await exports.getExpense(req, res, next);
+        const expenses = await Expense.findAll({where:{UserId:req.user.userId}})
         const StringifyExpenses = JSON.stringify(expenses);
-        //problem with this approach is everytime user downloads he updates file with his own expenses instead of downloading his own expenses
-        const filename = 'Expense.txt';
+       // should depend on userId
+        const userId = req.user.id;
+        const filename = `Expense${userId}/${new Date()}.txt`;
         const fileUrl = await uploadToS3(StringifyExpenses, filename);
-        res.status(200).json({ fileUrl, success: true });
+        return res.status(200).json({ fileUrl, success: true });
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Failed to upload file to S3' });
@@ -84,7 +90,6 @@ exports.getExpense = async (req, res, next) => {
         const date = req.params.date
         const expenses = await Expense.findAll({where:{UserId:req.user.userId}})
         res.json(expenses)
-        return expenses;
     } catch (error) {
         res.status(500).json({ error: 'Failed to retrieve information' });
     }
