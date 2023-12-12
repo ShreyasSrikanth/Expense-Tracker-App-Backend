@@ -5,6 +5,8 @@ const expenseModel = require('./models/expenseModel');
 const userModel = require('./models/signupModel');
 const orderModel = require('./models/purchaseModel');
 const passwordModel = require('./models/forgotpasswordModel');
+const contentModel = require('./models/contentModel');
+
 
 const app = express();
 
@@ -36,6 +38,9 @@ orderModel.belongsTo(userModel);
 
 userModel.hasMany(passwordModel);
 passwordModel.belongsTo(userModel);
+
+userModel.hasMany(contentModel);
+contentModel.belongsTo(userModel);
 
 sequelize.sync()
   .then(res => {

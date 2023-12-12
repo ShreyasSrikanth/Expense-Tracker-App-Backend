@@ -15,4 +15,6 @@ Router.post('/deleteexpense',authUser.authenticate,expenseController.deleteExpen
 
 Router.get('/download',authUser.authenticate,expenseController.downloadexpense)
 
+Router.get('/urls',authUser.authenticate,expenseController.fetchUrls)
+
 module.exports = Router;

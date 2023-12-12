@@ -1,57 +1,51 @@
 const Expense = require('../models/expenseModel');
 const Users = require('../models/signupModel');
+const Content = require('../models/contentModel');
+
 const { post } = require('../routes/signupRoute');
 const { where } = require('sequelize');
+
 const sequelise = require('../util/database');
-const AWS = require('aws-sdk');
-require('dotenv').config();
 
-function uploadToS3(data, filename){
-    console.log('BUCKET_NAME:', process.env.BUCKET_NAME);
-
-    const BUCKET_NAME = process.env.BUCKET_NAME;
-    const IAM_USER_KEY = process.env.IAM_USER_KEY;
-    const IAM_USER_SECRET = process.env.IAM_USER_SECRET;
-
-    const s3bucket = new AWS.S3({
-        accessKeyId: IAM_USER_KEY,
-        secretAccessKey: IAM_USER_SECRET
-    });
-
-    const params = {
-        Bucket: BUCKET_NAME,
-        Key: filename,
-        Body: data,
-        ACL: 'public-read'
-    };
-
-    return new Promise((resolve, reject) => {
-        s3bucket.upload(params, (err, s3response) => {
-            if (err) {
-                // console.error('Error uploading to S3:', err);
-                reject(err);
-            } else {
-                // console.log('Success:', s3response);
-                resolve(s3response.Location);
-            }
-        });
-    });
-}
+const UserServices = require('../services/userservices')
+const S3services = require('../services/S3service');
 
 exports.downloadexpense = async (req, res, next) => {
     try {
-        const expenses = await Expense.findAll({where:{UserId:req.user.userId}})
+        const expenses = await UserServices.fetchExpense(req.user.userId)
         const StringifyExpenses = JSON.stringify(expenses);
+        const t = await sequelise.transaction();
+
        // should depend on userId
         const userId = req.user.id;
         const filename = `Expense${userId}/${new Date()}.txt`;
-        const fileUrl = await uploadToS3(StringifyExpenses, filename);
+        const fileUrl = await S3services.uploadToS3(StringifyExpenses, filename);
+
+        await Content.create({
+            fileUrl:fileUrl,
+            UserId:req.user.userId
+        },{transaction:t})
+        .then(async(res) => {
+            console.log(res);
+            await t.commit();
+        })
+
         return res.status(200).json({ fileUrl, success: true });
+
     } catch (error) {
-        console.error('Error:', error);
         res.status(500).json({ error: 'Failed to upload file to S3' });
     }
 };
+
+exports.fetchUrls = async (req,res,next) => {
+    const urls = await Content.findAll({
+        attributes: ['fileUrl'],
+        where: { UserId: req.user.userId }
+    });
+
+    res.status(200).json({ urls, success: true });
+
+}
 
 exports.postExpense = async (req, res, next) => {
     const category = req.body.category;
@@ -88,7 +82,7 @@ exports.postExpense = async (req, res, next) => {
 exports.getExpense = async (req, res, next) => {
     try {
         const date = req.params.date
-        const expenses = await Expense.findAll({where:{UserId:req.user.userId}})
+        const expenses = await UserServices.fetchExpense(req.user.userId)
         res.json(expenses)
     } catch (error) {
         res.status(500).json({ error: 'Failed to retrieve information' });
