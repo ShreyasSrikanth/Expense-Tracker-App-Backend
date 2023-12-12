@@ -37,6 +37,7 @@ exports.downloadexpense = async (req, res, next) => {
     try {
         const expenses = await exports.getExpense(req, res, next);
         const StringifyExpenses = JSON.stringify(expenses);
+        //problem with this approach is everytime user downloads he updates file with his own expenses instead of downloading his own expenses
         const filename = 'Expense.txt';
         const fileUrl = await uploadToS3(StringifyExpenses, filename);
         res.status(200).json({ fileUrl, success: true });
