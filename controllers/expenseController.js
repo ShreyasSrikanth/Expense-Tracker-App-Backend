@@ -14,7 +14,6 @@ exports.downloadexpense = async (req, res, next) => {
     try {
         const expenses = await UserServices.fetchExpense(req.user.userId)
         const StringifyExpenses = JSON.stringify(expenses);
-
         const t = await sequelise.transaction();
 
        // should depend on userId
@@ -30,7 +29,9 @@ exports.downloadexpense = async (req, res, next) => {
             console.log(res);
             await t.commit();
         })
+
         return res.status(200).json({ fileUrl, success: true });
+
     } catch (error) {
         res.status(500).json({ error: 'Failed to upload file to S3' });
     }
@@ -137,3 +138,4 @@ exports.deleteExpense = async (req, res, next) => {
             res.status(500).json({ message: 'User doesnt exist to store the expense' });
         });
 };
+
