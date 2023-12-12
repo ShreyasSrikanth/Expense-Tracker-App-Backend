@@ -14,6 +14,7 @@ exports.downloadexpense = async (req, res, next) => {
     try {
         const expenses = await UserServices.fetchExpense(req.user.userId)
         const StringifyExpenses = JSON.stringify(expenses);
+<<<<<<< HEAD
         const t = await sequelise.transaction();
 
        // should depend on userId
@@ -31,7 +32,6 @@ exports.downloadexpense = async (req, res, next) => {
         })
 
         return res.status(200).json({ fileUrl, success: true });
-
     } catch (error) {
         res.status(500).json({ error: 'Failed to upload file to S3' });
     }
