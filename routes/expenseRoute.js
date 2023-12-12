@@ -13,6 +13,6 @@ Router.get('/fetchAllexpense',expenseController.getAllExpense);
 
 Router.post('/deleteexpense',authUser.authenticate,expenseController.deleteExpense);
 
-Router.get('/download',expenseController.downloadexpense)
+Router.get('/download',authUser.authenticate,expenseController.downloadexpense)
 
 module.exports = Router;

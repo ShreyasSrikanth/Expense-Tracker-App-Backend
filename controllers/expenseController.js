@@ -3,11 +3,48 @@ const Users = require('../models/signupModel');
 const { post } = require('../routes/signupRoute');
 const { where } = require('sequelize');
 const sequelise = require('../util/database');
+const AWS = require('aws-sdk');
+require('dotenv').config();
 
-exports.downloadexpense = async (req,res,next) =>{
-    const expenses = await exports.getExpense(req,res,next);
-    console.log('=-=-=-=-=->',expenses);
+function uploadToS3(data, filename){
+    const BUCKET_NAME = 'expensetrackingapp2023';
+    const IAM_USER_KEY = 'AKIAWW642STSA6YRWSOV';
+    const IAM_USER_SECRET = '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';
+
+    const s3bucket = new AWS.S3({
+        accessKeyId: IAM_USER_KEY,
+        secretAccessKey: IAM_USER_SECRET
+    });
+
+    const params = {
+        Bucket: BUCKET_NAME,
+        Key: filename,
+        Body: data
+    };
+
+    return new Promise((resolve, reject) => {
+        s3bucket.upload(params, (err, s3response) => {
+            if (err) {
+                console.error('Error listing objects:', err);
+            } else {
+                console.log('Success:', s3response);
+            }
+        });
+    });
 }
+
+exports.downloadexpense = async (req, res, next) => {
+    try {
+        const expenses = await exports.getExpense(req, res, next);
+        const StringifyExpenses = JSON.stringify(expenses);
+        const filename = 'Expense.txt';
+        const fileUrl = await uploadToS3(StringifyExpenses, filename);
+        res.status(200).json({ fileUrl, success: true });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Failed to upload file to S3' });
+    }
+};
 
 exports.postExpense = async (req, res, next) => {
     const category = req.body.category;
@@ -45,8 +82,8 @@ exports.getExpense = async (req, res, next) => {
     try {
         const date = req.params.date
         const expenses = await Expense.findAll({where:{UserId:req.user.userId}})
-        console.log('========>',expenses)
-        res.json(expenses);
+        res.json(expenses)
+        return expenses;
     } catch (error) {
         res.status(500).json({ error: 'Failed to retrieve information' });
     }
