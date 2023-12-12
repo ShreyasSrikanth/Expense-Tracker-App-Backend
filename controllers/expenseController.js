@@ -138,4 +138,3 @@ exports.deleteExpense = async (req, res, next) => {
             res.status(500).json({ message: 'User doesnt exist to store the expense' });
         });
 };
-
