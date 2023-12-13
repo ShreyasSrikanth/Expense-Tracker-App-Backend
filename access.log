@@ -1,0 +1,2 @@
+::1 - - [13/Dec/2023:23:26:20 +0000] "OPTIONS /expense/fetchexpense/14?start=0&limit=1 HTTP/1.1" 204 0 "http://127.0.0.1:5500/" "Mozilla/5.0 (Linux; Android) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.109 Safari/537.36 CrKey/1.54.248666 Edg/120.0.0.0"
+::1 - - [13/Dec/2023:23:26:20 +0000] "GET /expense/fetchexpense/14?start=0&limit=1 HTTP/1.1" 304 - "http://127.0.0.1:5500/" "Mozilla/5.0 (Linux; Android) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.109 Safari/537.36 CrKey/1.54.248666 Edg/120.0.0.0"
