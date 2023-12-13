@@ -82,7 +82,11 @@ exports.postExpense = async (req, res, next) => {
 exports.getExpense = async (req, res, next) => {
     try {
         const date = req.params.date
-        const expenses = await UserServices.fetchExpense(req.user.userId)
+        const start = parseInt(req.query.start)
+        const limit = parseInt(req.query.limit)
+        
+
+        const expenses = await UserServices.fetchExpense(req.user.userId,start,limit)
         res.json(expenses)
     } catch (error) {
         res.status(500).json({ error: 'Failed to retrieve information' });
