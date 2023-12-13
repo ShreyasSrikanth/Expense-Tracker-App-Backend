@@ -1,6 +1,8 @@
 const path = require('path');
 const cors = require('cors');
 const express = require('express');
+const fs = require('fs')
+
 const expenseModel = require('./models/expenseModel');
 const userModel = require('./models/signupModel');
 const orderModel = require('./models/purchaseModel');
@@ -9,6 +11,8 @@ const contentModel = require('./models/contentModel');
 
 
 const app = express();
+const helmet = require('helmet');
+const morgan = require('morgan');
 
 const sequelize = require('./util/database');
 const bodyParser = require('body-parser');
@@ -16,6 +20,16 @@ const signupRoute = require('./routes/signupRoute');
 const expenseRoute = require('./routes/expenseRoute');
 const premiumRoute = require('./routes/purchaseRoute');
 const passwordRoute = require('./routes/forgotpasswordRoute');
+
+require('dotenv').config();
+
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname,'access.log'),
+  {flags:'a'}
+);
+
+app.use(helmet());
+app.use(morgan('combined'));
 
 app.use(cors({
     origin:['http://127.0.0.1:5500','http://127.0.0.1:5500/Login/Login.html'],
@@ -44,7 +58,7 @@ contentModel.belongsTo(userModel);
 
 sequelize.sync()
   .then(res => {
-    app.listen(4000);
+    app.listen(process.env.PORT || 4000);
   })
   .catch(err => {
     console.log(err);
