@@ -29,7 +29,7 @@ const accessLogStream = fs.createWriteStream(
 );
 
 app.use(helmet());
-app.use(morgan('combined'));
+app.use(morgan('combined',{stream:accessLogStream}));
 
 app.use(cors({
     origin:['http://127.0.0.1:5500','http://127.0.0.1:5500/Login/Login.html'],
