@@ -35,16 +35,15 @@ const accessLogStream = fs.createWriteStream(
 // app.use(cors());
 
 
-// app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.json());
 app.use('/users',signupRoute);
 app.use('/password',passwordRoute)
 app.use('/expense',expenseRoute);
 app.use('/premium',premiumRoute);
 
-app.use((req,res) =>{
-  res.sendFile(path.join(__dirname,`public/${req.url}`));
-})
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 
 
