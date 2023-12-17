@@ -12,6 +12,7 @@ exports.postItem = (req, res, next) => {
     const pass = req.body.pass;
     const ispremiumuser = req.body.ispremiumuser;
      const totalExpense = req.body.totalExpense;
+     console.log('name====>',name)
     
     const saltround = 10;
 
@@ -49,6 +50,7 @@ function generateToken(id,name){
 exports.loginUser = async (req, res, next) => {
     const email = req.body.email;
     const pass = req.body.pass;
+    console.log('ema',email)
 
     let user = await Signup.findOne({ where: { email: email } });
     

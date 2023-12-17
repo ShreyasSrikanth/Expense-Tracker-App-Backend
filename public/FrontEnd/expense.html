@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net;">
+
+    <title>Expense Tracker</title>
+    <style>
+        .date-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        #calender{
+            width: -webkit-fill-available;
+            text-align: center;
+        }
+
+        #selectedDate{
+            display: inline-flex;
+        }
+
+        #categoryBar {
+            display: none;
+        }
+
+        #expenditures{
+            text-align: center;
+        }
+
+        #addExpenseDiv{
+            text-align: center;
+        }
+
+        #categoryBar{
+            display: none;
+            width: 100%;
+            justify-content: space-evenly;
+            background: cadetblue;
+            padding: 3px;
+            border-radius: 15px;
+        }
+        
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 9px;
+            cursor: pointer;
+            color: white;
+            background-color: #3498db; /* Blue color */
+            transition: background-color 0.3s ease;
+            margin-left: 16px;
+        }
+
+        button:hover {
+            background-color: #425c6d; /* Darker shade of blue on hover */
+        }
+
+        #viewExpenses{
+            background-color: #3c5464;
+            padding: 10px;
+            color: white;
+            border: none;
+            border-radius: 13px;
+        }
+
+        .date-container {
+         background-color: #3498db;
+         border-radius: 5px;
+        }
+
+        #descandsubmit{
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Defines columns */
+            gap: 10px
+        }
+
+        #categoryandamount{
+            display: grid;
+            gap: 55px;
+            padding-right: 15px;
+            width: 18vh;
+        }
+        
+        #expenditures{
+            height: 72vh;
+            width: -webkit-fill-available;
+            text-align-last: center;
+            text-align: -webkit-center
+        } 
+        
+        #expenses{
+            padding-right: 5px;
+        }
+
+        body{
+            background-color: rgb(4 18 49 / 76%);
+            color: aliceblue;
+        }
+
+        #premiumButton {
+            border-radius: 11px;
+            background-color: #a16060;
+            height: fit-content;
+            font-size: xx-small;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        #premiumButton:hover {
+           background-color: #d08787;
+        }
+
+        #premiumButton:active {
+            transform: scale(0.95); 
+        }
+
+        #leaderBoard {
+            display: none;
+            border-radius: 11px;
+            background-color: #a19a60;
+            height: fit-content;
+            font-size: xx-small;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        #leaderBoard:hover {
+           background-color: #a19a60;
+        }
+
+        #leaderBoard:active {
+            transform: scale(0.95); 
+        }
+
+         #premium{
+            padding-right: 5px;
+         }
+         #downloadExpenseDiv {
+           text-align: right;
+        }
+
+        .expense-table {
+           width: 70%;
+           border-collapse: collapse;
+        }
+
+        .expense-table th,
+        .expense-table td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+       .expense-table th {
+            background-color: #b82e2e;
+        }
+ 
+       .expense-table .delete-cell {
+            text-align: center;
+        }
+
+        .expense-table button {
+            cursor: pointer;
+            padding: 4px 8px;
+            background-color: #ff3333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        #downloadExpense{
+            border-radius: 20px;
+        }
+
+        #addExpense{
+            border-radius: 20px;
+        }
+
+         @media only screen and (max-width: 1024px) {
+            #premiumButton{
+            border-radius: 11px;
+            background-color: #a16060;
+            height: fit-content;
+            font-size: xx-small;
+        }
+        .expense-table {
+        font-size: 10px; /* Further reduce font size for smaller screens */
+    }
+
+    .expense-table th,
+    .expense-table td {
+        padding: 4px;
+    }
+    }
+        
+    </style>
+</head>
+<body>
+    <div class="expense-container">
+        <div id="premiumTitle">
+        </div>
+        <div class="date-container">
+            <div id="calender">
+                <button id="prevDay">&lt;</button>
+                <p id="selectedDate"></p>
+                <button id="nextDay">&gt;</button>
+            </div>
+            <div id="expenses">
+                <select id="viewExpenses">
+                    <option value="daily">Daily</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+            </div>
+            <div id="premium">
+                <button id="premiumButton">Premium Button</button>
+                <button id="leaderBoard">Show LeaderBoard</button>
+            </div>
+        </div>
+
+        <div id="expenditures">
+            <ul id="expenseList"></ul>
+        </div>
+
+        <div id="nextprevexpenseDiv" style="text-align: center; margin-bottom: 20px;">
+            <div>
+                <label for="expDropdownlabel">Rows per page:</label>
+                <select id="expDropdown" style="border-radius: 6px; border: 1px solid;">
+                    <option value="1">1</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                </select>
+            </div>
+            <button id="prevExpense"> << </button>
+            <button id="nextExpense"> >> </button>
+        </div>
+
+        
+
+    <form id="expensesForm">
+        <div id="categoryBar" class="category-bar">
+            <div id="categoryandamount">
+                <select id="expenseCategory" style="border-radius: 10px; border: none; width: 15vh;">
+                    <option value="fuel">Fuel</option>
+                    <option value="food">Food</option>
+                    <option value="movies">Movies</option>
+                    <option value="travel">Travel</option>
+                </select>
+                <input type="number" id="expenseAmount" placeholder="Amount" style="border-radius: 10px; border: none; width: 15vh;"> 
+            </div>
+            <div id="descandsubmit">
+                <textarea id="expenseDescription" placeholder="Description" rows="5" style="border-radius: 10px; border: none; "></textarea>           
+                <input type="submit" id="submit" name="submit" class="category-bar" value="Submit" style="color: grey; background-color: aquamarine; border-radius: 7px; border:none; width: 15vh; margin-left: 40px;">  
+            </div>
+           
+        </div>
+    </form>
+    <div id="addExpenseDiv">
+        <button id="addExpense">+</button>
+    </div>
+
+    <div id="premiumfeature">
+        <ul id="leaderboardlist"></ul>
+        <h4 id="urlListHeader"></h4>
+        <ul id="urlList"></ul>
+    </div>
+
+    <div id="downloadExpenseDiv">
+        <button id="downloadExpense">&#x2B07;</button>
+    </div>
+</div>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="frontendscript.js"></script>
+    <script src="payment.js"></script>
+</body>
+</html>

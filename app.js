@@ -28,21 +28,25 @@ const accessLogStream = fs.createWriteStream(
   {flags:'a'}
 );
 
-app.use(helmet());
-app.use(morgan('combined',{stream:accessLogStream}));
+// app.use(helmet());
 
-app.use(cors({
-    origin:['http://127.0.0.1:5500','http://127.0.0.1:5500/Login/Login.html'],
-    methods:['GET','POST'],
-    credentials:true
-}));
+// app.use(morgan('combined',{stream:accessLogStream}));
 
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
+// app.use(cors());
+
+
+// app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.json());
 app.use('/users',signupRoute);
 app.use('/password',passwordRoute)
 app.use('/expense',expenseRoute);
 app.use('/premium',premiumRoute);
+
+app.use((req,res) =>{
+  res.sendFile(path.join(__dirname,`public/${req.url}`));
+})
+
+
 
 userModel.hasMany(expenseModel);
 expenseModel.belongsTo(userModel);
