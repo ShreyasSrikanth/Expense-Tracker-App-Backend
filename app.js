@@ -44,6 +44,15 @@ app.use('/premium',premiumRoute);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/', (req, res) => {
+  res.redirect('/Login/Login.html');
+});
+
+
+app.get('/:dynamicRoute', (req, res) => {
+  const dynamicRoute = req.params.dynamicRoute;
+  res.send(`Dynamic Route: ${dynamicRoute}`);
+});
 
 
 
