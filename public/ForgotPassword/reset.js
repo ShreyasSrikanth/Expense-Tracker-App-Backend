@@ -8,7 +8,7 @@ resetform.addEventListener('submit', async (e) => {
 
     let resetPassword = document.getElementById('password').value;
      
-    const response = await axios.post('http://54.88.3.81:4000/password/reset', {
+    const response = await axios.post('http://54.85.62.48:4000/password/reset', {
         newPassword: resetPassword,
         requestId: requestId
     }, {

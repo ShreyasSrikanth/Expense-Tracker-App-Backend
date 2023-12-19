@@ -21,7 +21,7 @@ document.getElementById('forgotpassword').addEventListener('click', function(e){
   
   async function fetchUsers() {
     try {
-      const response = await axios.get('http://54.88.3.81:4000/users/fetchusers');
+      const response = await axios.get('http://54.85.62.48:4000/users/fetchusers');
       return response.data;
     } catch (err) {
       console.error(err);
@@ -35,7 +35,7 @@ document.getElementById('forgotpassword').addEventListener('click', function(e){
   
     try {
       console.log('hiiiiiii')
-        const response = await axios.post('http://54.88.3.81:4000/users/login', {
+        const response = await axios.post('http://54.85.62.48:4000/users/login', {
             email: email,
             pass: pass,
             completed: false
