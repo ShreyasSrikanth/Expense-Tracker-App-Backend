@@ -32,7 +32,7 @@ const accessLogStream = fs.createWriteStream(
 
 // app.use(morgan('combined',{stream:accessLogStream}));
 
-// app.use(cors());
+app.use(cors());
 
 
 app.use(bodyParser.urlencoded({extended: false}));
