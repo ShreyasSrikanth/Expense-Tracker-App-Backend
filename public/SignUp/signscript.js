@@ -4,7 +4,7 @@ form.addEventListener('submit',sendSignUp);
 
 async function fetchUsers(){
     try {
-        const response = await axios.get('http://54.85.62.48:4000/users/fetchusers');
+        const response = await axios.get('http://44.217.5.190:4000/users/fetchusers');
         return response.data;
 
     } catch (err) {
@@ -35,7 +35,7 @@ async function sendSignUp(e){
     }
 
     try {
-        const response = await axios.post('http://54.85.62.48:4000/users/signup', {
+        const response = await axios.post('http://44.217.5.190:4000/users/signup', {
             name: name,
             email: email,
             pass: pass,
