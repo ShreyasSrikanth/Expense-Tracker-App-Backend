@@ -96,9 +96,6 @@ exports.updatePassword = async (req, res) => {
     const requestId = req.body.requestId;
     const newPassword = req.body.newPassword;
 
-    console.log(req.user.userId);
-    console.log(newPassword);
-
     try {
         const encryptedPassword = await bcrypt.hash(newPassword, 10);
 

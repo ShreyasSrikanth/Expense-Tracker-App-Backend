@@ -51,7 +51,6 @@ async function fetchAllexpense() {
 
 premiumButton.addEventListener('click', async (e) => {
     e.preventDefault()
-    console.log('You are a premium member');
     
     try {
         const token = localStorage.getItem('token');
