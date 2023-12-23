@@ -27,7 +27,7 @@ if(ispremiumuser === 'true'){
 
 async function fetchAllexpense() {
     try {
-      const response = await axios.get('http://44.217.5.190:4000/expense/fetchAllexpense');
+      const response = await axios.get('http://54.158.222.0:4000/expense/fetchAllexpense');
       return response.data;
     } catch (err) {
       console.error(err);
@@ -54,7 +54,7 @@ premiumButton.addEventListener('click', async (e) => {
     
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://44.217.5.190:4000/premium/premiummembership', {
+        const response = await axios.get('http://54.158.222.0:4000/premium/premiummembership', {
             headers: {
                 'Authorization': token
             }
@@ -65,7 +65,7 @@ premiumButton.addEventListener('click', async (e) => {
             "order_id": response.data.order.id,
             "handler": async function (rzpResponse) {
                 try {
-                    await axios.post('http://44.217.5.190:4000/premium/updateTransaction', {
+                    await axios.post('http://54.158.222.0:4000/premium/updateTransaction', {
                         order_id: options.order_id,
                         payment_id: rzpResponse.razorpay_payment_id,
                     }, { headers: { 'Authorization': token } });

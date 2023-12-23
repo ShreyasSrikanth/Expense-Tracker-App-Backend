@@ -4,7 +4,7 @@ form.addEventListener('submit',sendSignUp);
 
 async function fetchUsers(){
     try {
-        const response = await axios.get('http://44.217.5.190:4000/users/fetchusers');
+        const response = await axios.get('http://54.158.222.0:4000/users/fetchusers');
         return response.data;
 
     } catch (err) {
@@ -20,10 +20,6 @@ async function sendSignUp(e){
     let email = document.getElementById('email').value;
     let pass = document.getElementById('pass').value;
 
-    console.log(name);
-    console.log(email);
-    console.log(pass);
-
     var displayUsers = await fetchUsers();
     
 
@@ -35,7 +31,7 @@ async function sendSignUp(e){
     }
 
     try {
-        const response = await axios.post('http://44.217.5.190:4000/users/signup', {
+        const response = await axios.post('http://54.158.222.0:4000/users/signup', {
             name: name,
             email: email,
             pass: pass,
@@ -43,8 +39,6 @@ async function sendSignUp(e){
             totalExpense:0,
             completed: false
         });
-
-        console.log("response",response)
 
         alert("data succefully stored");
         window.location.href = '../Login/Login.html';

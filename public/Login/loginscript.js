@@ -21,7 +21,7 @@ document.getElementById('forgotpassword').addEventListener('click', function(e){
   
   async function fetchUsers() {
     try {
-      const response = await axios.get('http://44.217.5.190:4000/users/fetchusers');
+      const response = await axios.get('http://54.158.222.0:4000/users/fetchusers');
       return response.data;
     } catch (err) {
       console.error(err);
@@ -34,8 +34,7 @@ document.getElementById('forgotpassword').addEventListener('click', function(e){
     let pass = document.getElementById('pass').value;
   
     try {
-      console.log('hiiiiiii')
-        const response = await axios.post('http://44.217.5.190:4000/users/login', {
+        const response = await axios.post('http://54.158.222.0:4000/users/login', {
             email: email,
             pass: pass,
             completed: false
@@ -44,7 +43,6 @@ document.getElementById('forgotpassword').addEventListener('click', function(e){
               return status >= 200 && status < 500; // Resolve only if status is between 200 and 499
             }
           });
-          console.log('hiiiii3')
           
           if (response.status === 200) {
             alert(response.data.message);
