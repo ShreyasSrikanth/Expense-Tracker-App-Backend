@@ -34,7 +34,6 @@ const accessLogStream = fs.createWriteStream(
 
 app.use(cors());
 
-console.log("jenkins")
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.json());
