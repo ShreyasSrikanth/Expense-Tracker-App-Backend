@@ -22,7 +22,7 @@ exports.forgotpassword = async (req, res, next) => {
             UserId: userid,
         });
 
-        const resetLink = `http://54.158.222.0:4000/password/reset/${requestId}`;
+        const resetLink = `http://54.89.204.195:4000/password/reset/${requestId}`;
 
         const client = Sib.ApiClient.instance;
 

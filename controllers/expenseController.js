@@ -9,10 +9,19 @@ const sequelise = require('../util/database');
 
 const UserServices = require('../services/userservices')
 const S3services = require('../services/S3service');
+let start;
+let limit;
+let day;
+let month;
+let year;
+let viewExpenses;
 
 exports.downloadexpense = async (req, res, next) => {
     try {
-        const expenses = await UserServices.fetchExpense(req.user.userId)
+
+        console.log("hiiiii")
+        const expenses = await UserServices.fetchExpense(req.user.userId, start, limit, day, month, year, viewExpenses)
+        console.log(expenses)
         const StringifyExpenses = JSON.stringify(expenses);
         const t = await sequelise.transaction();
 
@@ -20,6 +29,7 @@ exports.downloadexpense = async (req, res, next) => {
         const userId = req.user.id;
         const filename = `Expense${userId}/${new Date()}.txt`;
         const fileUrl = await S3services.uploadToS3(StringifyExpenses, filename);
+        console.log(fileUrl)
 
         await Content.create({
             fileUrl:fileUrl,
@@ -29,6 +39,7 @@ exports.downloadexpense = async (req, res, next) => {
             console.log(res);
             await t.commit();
         })
+        
 
         return res.status(200).json({ fileUrl, success: true });
 
@@ -81,17 +92,25 @@ exports.postExpense = async (req, res, next) => {
 
 exports.getExpense = async (req, res, next) => {
     try {
-        const date = req.params.date
-        const start = parseInt(req.query.start)
-        const limit = parseInt(req.query.limit)
-        
+        const dateString = req.params.date;
+        start = parseInt(req.query.start);
+        limit = parseInt(req.query.limit);
 
-        const expenses = await UserServices.fetchExpense(req.user.userId,start,limit)
-        res.json(expenses)
+        viewExpenses = req.query.viewExpenses
+        
+        const date = new Date(dateString);
+
+        day = date.getDate();
+        month = date.toLocaleString('default', { month: 'short' });
+        year = date.getFullYear();
+
+        const expenses = await UserServices.fetchExpense(req.user.userId, start, limit, day, month, year, viewExpenses);
+        res.json(expenses);
     } catch (error) {
         res.status(500).json({ error: 'Failed to retrieve information' });
     }
 };
+
 
 exports.getAllExpense = async (req, res, next) => {
     try {

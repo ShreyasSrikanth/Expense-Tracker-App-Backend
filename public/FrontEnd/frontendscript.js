@@ -19,10 +19,12 @@ let isCategoryBarVisible = false;
 
 var fetchDate;
 
+let currentFormattedDate;
+
 
 function displayCurrentDate() {
     const options = { year: 'numeric', month: 'long', day: '2-digit' };
-    const currentFormattedDate = currentDate.toLocaleDateString('en-US', options);
+    currentFormattedDate = currentDate.toLocaleDateString('en-US', options);
     selectedDate.textContent = currentFormattedDate;
 
     const dateString = currentFormattedDate;
@@ -31,7 +33,7 @@ function displayCurrentDate() {
     const month = date.toLocaleString('default', { month: 'short' });
     const year = date.getFullYear();
 
-    fetchExpense(day)
+    fetchExpense(currentFormattedDate,viewExpensesSelect.value)
     .then(res => {
         if (res) {
             displayExpenses(res);
@@ -44,7 +46,7 @@ function displayCurrentDate() {
 
 function displayCurrentMonth() {
     const options = { year: 'numeric', month: 'long' };
-    const currentFormattedDate = currentDate.toLocaleDateString('en-US', options);
+    currentFormattedDate = currentDate.toLocaleDateString('en-US', options);
     selectedDate.textContent = currentFormattedDate;
 
     const dateString = currentFormattedDate;
@@ -52,7 +54,7 @@ function displayCurrentMonth() {
     const month = date.getMonth()+1;
     const year = date.getFullYear();
 
-    fetchExpense(month)
+    fetchExpense(currentFormattedDate,viewExpensesSelect.value)
     .then(res => {
         if (res) {
             displayExpenses(res);
@@ -65,14 +67,14 @@ function displayCurrentMonth() {
 
 function displayCurrentYear() {
     const options = { year: 'numeric' };
-    const currentFormattedDate = currentDate.toLocaleDateString('en-US', options);
+    currentFormattedDate = currentDate.toLocaleDateString('en-US', options);
     selectedDate.textContent = currentFormattedDate;
     const dateString = currentFormattedDate;
     const date = new Date(dateString);
     const month = date.getMonth();
     const year = date.getFullYear();
 
-    fetchExpense(year)
+    fetchExpense(currentFormattedDate,viewExpensesSelect.value)
     .then(res => {
         if (res) {
             displayExpenses(res);
@@ -99,16 +101,18 @@ addExpenseButton.addEventListener('click', () => {
     }
 });
 
-async function fetchExpense(currentFormattedDate){
+async function fetchExpense(currentFormattedDate,viewExpenses){
     try {
         let start = 0;
         let limit = parseInt(document.getElementById('expDropdown').value);
         var token = localStorage.getItem('token');
 
+        console.log(viewExpenses)
+
         const expDropdownSelect = document.getElementById('expDropdown');
         expDropdownSelect.addEventListener('change', async (event) => {
             limit = parseInt(event.target.value);
-            await axios.get(`http://54.158.222.0:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}`, {
+            await axios.get(`http://54.89.204.195:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}&viewExpenses=${viewExpenses}`, {
             headers: {
                 'Authorization': token
             }
@@ -119,7 +123,7 @@ async function fetchExpense(currentFormattedDate){
         
         nextExpense.addEventListener('click', async ()=>{
             start = start + limit;
-            await axios.get(`http://54.158.222.0:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}`, {
+            await axios.get(`http://54.89.204.195:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}&viewExpenses=${viewExpenses}`, {
             headers: {
                 'Authorization': token
             }
@@ -132,7 +136,7 @@ async function fetchExpense(currentFormattedDate){
 
             start = start - limit;
             if(start >= 0){
-                await axios.get(`http://54.158.222.0:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}`, {
+                await axios.get(`http://54.89.204.195:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}&viewExpenses=${viewExpenses}`, {
                 headers: {
                     'Authorization': token
                 }
@@ -145,7 +149,7 @@ async function fetchExpense(currentFormattedDate){
             
         })
 
-        const response = await axios.get(`http://54.158.222.0:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}`, {
+        const response = await axios.get(`http://54.89.204.195:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}&viewExpenses=${viewExpenses}`, {
             headers: {
                 'Authorization': token
             }
@@ -206,7 +210,7 @@ function displayExpenses(expenses) {
         deleteButton.textContent = 'Delete';
         deleteButton.addEventListener('click', async () => {
             const token = localStorage.getItem('token');
-            const response = await axios.post('http://54.158.222.0:4000/expense/deleteexpense', {
+            const response = await axios.post('http://54.89.204.195:4000/expense/deleteexpense', {
                 ID: expense.id,
                 amount: expense.amount
             }, {
@@ -215,7 +219,7 @@ function displayExpenses(expenses) {
                 }
             });
             if (response.status === 200) {
-                const updatedExpenses = await fetchExpense();
+                const updatedExpenses = await fetchExpense(currentFormattedDate,viewExpensesSelect.value);
                 if (updatedExpenses) {
                     expenseTable.innerHTML = '';
                     displayExpenses(updatedExpenses);
@@ -292,7 +296,7 @@ expenseForm.addEventListener('submit', async (event) => {
     };
 
     var token = localStorage.getItem('token');
-    const response = await axios.post('http://54.158.222.0:4000/expense/storeexpense', {
+    const response = await axios.post('http://54.89.204.195:4000/expense/storeexpense', {
         category: expenseCategory,
         amount: expenseAmount,
         desc: expenseDescription,
@@ -304,7 +308,7 @@ expenseForm.addEventListener('submit', async (event) => {
     });
 
     if (response.status === 200) {
-        const updatedExpenses = await fetchExpense();
+        const updatedExpenses = await fetchExpense(currentFormattedDate,viewExpensesSelect.value);
         if (updatedExpenses) {
             expenseList.innerHTML = '';
             displayExpenses(updatedExpenses);
@@ -328,7 +332,7 @@ if(ispremiumuser ==='true'){
     
         try {
             var token = localStorage.getItem('token')
-            const response = await axios.get(`http://54.158.222.0:4000/expense/download`, {
+            const response = await axios.get(`http://54.89.204.195:4000/expense/download`, {
                 headers: {
                     'Authorization': token
                 }
@@ -340,7 +344,7 @@ if(ispremiumuser ==='true'){
             a.download = 'expense.csv';
             a.click();
     
-            const allUrls = await axios.get(`http://54.158.222.0:4000/expense/urls`, {
+            const allUrls = await axios.get(`http://54.89.204.195:4000/expense/urls`, {
                 headers: {
                     'Authorization': token
                 }
