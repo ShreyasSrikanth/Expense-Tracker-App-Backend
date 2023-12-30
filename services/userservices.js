@@ -7,6 +7,8 @@ exports.fetchExpense = async (id,start,limit,day,month,year,viewExpenses) => {
 
     const parsedDay = parseInt(day);
     const parsedYear = parseInt(year);
+
+    
     if(viewExpenses==="daily"){
         const monthMap = {
             Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6,
@@ -14,7 +16,7 @@ exports.fetchExpense = async (id,start,limit,day,month,year,viewExpenses) => {
         };
         const monthNumber = monthMap[month];
         const parsedMonth = parseInt(monthNumber);
-        
+
         const expenses = await Expense.findAll({
             where: {
                 UserId: id,

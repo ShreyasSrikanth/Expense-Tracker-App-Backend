@@ -27,7 +27,7 @@ exports.forgotpassword = async (req, res, next) => {
         const client = Sib.ApiClient.instance;
 
         var apiKey = client.authentications['api-key'];
-        apiKey.apiKey = process.env.API_KEY;
+        apiKey.apiKey = "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";
         var transEmailApi = new Sib.TransactionalEmailsApi();
 
         const sender = {
@@ -82,7 +82,7 @@ exports.resetPassword = async (req, res) => {
         });
 
         if (resetRequest) {
-            const newPasswordURL = `http://127.0.0.1:5500/ForgotPassword/newpassword.html?requestId=${requestId}`;
+            const newPasswordURL = `http://localhost:4000/ForgotPassword/newpassword.html?requestId=${requestId}`;
             res.redirect(newPasswordURL);
         } else {
             res.status(400).json({ error: 'Invalid or expired reset link' });

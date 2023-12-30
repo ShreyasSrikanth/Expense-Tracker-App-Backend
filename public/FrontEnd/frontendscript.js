@@ -20,6 +20,7 @@ let isCategoryBarVisible = false;
 var fetchDate;
 
 let currentFormattedDate;
+let expLength;
 
 
 function displayCurrentDate() {
@@ -101,53 +102,66 @@ addExpenseButton.addEventListener('click', () => {
     }
 });
 
-async function fetchExpense(currentFormattedDate,viewExpenses){
+async function fetchExpense(currentFormattedDate, viewExpenses) {
     try {
         let start = 0;
         let limit = parseInt(document.getElementById('expDropdown').value);
-        var token = localStorage.getItem('token');
-
-        console.log(viewExpenses)
+        const token = localStorage.getItem('token');
 
         const expDropdownSelect = document.getElementById('expDropdown');
         expDropdownSelect.addEventListener('change', async (event) => {
             limit = parseInt(event.target.value);
-            await axios.get(`http://54.89.204.195:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}&viewExpenses=${viewExpenses}`, {
-            headers: {
-                'Authorization': token
+            try {
+                const res = await axios.get(`http://54.89.204.195:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}&viewExpenses=${viewExpenses}`, {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+                displayExpenses(res.data);
+            } catch (error) {
+                console.log("Error fetching expenses:", error);
             }
-        }).then(res=>{
-            displayExpenses(res.data);
-        })
         });
-        
-        nextExpense.addEventListener('click', async ()=>{
+
+        nextExpense.addEventListener('click', async () => {
             start = start + limit;
-            await axios.get(`http://54.89.204.195:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}&viewExpenses=${viewExpenses}`, {
-            headers: {
-                'Authorization': token
-            }
-        }).then(res=>{
-            displayExpenses(res.data);
-        })
-        })
+            try {
+                const res = await axios.get(`http://54.89.204.195:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}&viewExpenses=${viewExpenses}`, {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+                console.log(res.data);
+                displayExpenses(res.data);
+                expLength = res.data.length;
 
-        prevExpense.addEventListener('click',async ()=>{
-
-            start = start - limit;
-            if(start >= 0){
-                await axios.get(`http://54.89.204.195:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}&viewExpenses=${viewExpenses}`, {
-                headers: {
-                    'Authorization': token
+                if (expLength === 0 || expLength <= limit) {
+                    nextExpense.disabled = true;
                 }
-                }).then(res=>{
-                        displayExpenses(res.data);
-                })
+            } catch (error) {
+                console.log("Error fetching expenses:", error);
+            }
+        });
+
+        prevExpense.addEventListener('click', async () => {
+            start = start - limit;
+            nextExpense.disabled = false;
+            if (start >= 0) {
+                try {
+                    const res = await axios.get(`http://54.89.204.195:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}&viewExpenses=${viewExpenses}`, {
+                        headers: {
+                            'Authorization': token
+                        }
+                    });
+                    console.log(res.data);
+                    displayExpenses(res.data);
+                } catch (error) {
+                    console.log("Error fetching expenses:", error);
+                }
             } else {
                 start = 0;
             }
-            
-        })
+        });
 
         const response = await axios.get(`http://54.89.204.195:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}&viewExpenses=${viewExpenses}`, {
             headers: {
@@ -155,14 +169,14 @@ async function fetchExpense(currentFormattedDate,viewExpenses){
             }
         });
 
-    return response.data
-
-    } catch(err){
-        console.log("Failed to fetch expenses",err)
+        return response.data;
+    } catch (err) {
+        console.log("Failed to fetch expenses", err);
     }
 }
 
 function displayExpenses(expenses) {
+    const expenseList = document.getElementById('expenseList');
     const expenseTable = document.createElement('table');
     expenseTable.classList.add('expense-table');
 
@@ -178,8 +192,8 @@ function displayExpenses(expenses) {
     tableHeader.appendChild(headerRow);
     expenseTable.appendChild(tableHeader);
 
-   
     const tableBody = document.createElement('tbody');
+
     expenses.forEach((expense) => {
         const row = document.createElement('tr');
 
@@ -187,7 +201,6 @@ function displayExpenses(expenses) {
         categoryCell.textContent = expense.category;
         row.appendChild(categoryCell);
 
-        
         const descriptionCell = document.createElement('td');
         descriptionCell.textContent = expense.description;
         row.appendChild(descriptionCell);
@@ -203,7 +216,6 @@ function displayExpenses(expenses) {
         createdAtCell.textContent = formattedDate;
         row.appendChild(createdAtCell);
 
-        // Delete button cell
         const deleteButtonCell = document.createElement('td');
         deleteButtonCell.classList.add('delete-cell');
         const deleteButton = document.createElement('button');
@@ -219,9 +231,8 @@ function displayExpenses(expenses) {
                 }
             });
             if (response.status === 200) {
-                const updatedExpenses = await fetchExpense(currentFormattedDate,viewExpensesSelect.value);
+                const updatedExpenses = await fetchExpense(currentFormattedDate, viewExpensesSelect.value);
                 if (updatedExpenses) {
-                    expenseTable.innerHTML = '';
                     displayExpenses(updatedExpenses);
                 }
             }
@@ -231,12 +242,12 @@ function displayExpenses(expenses) {
 
         tableBody.appendChild(row);
     });
-    expenseTable.appendChild(tableBody);
 
-    const expenseList = document.getElementById('expenseList');
+    expenseTable.appendChild(tableBody);
     expenseList.innerHTML = '';
     expenseList.appendChild(expenseTable);
 }
+
 
 prevDayButton.addEventListener('click', () => {
     if (viewExpensesSelect.value === 'daily') {
