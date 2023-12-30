@@ -82,7 +82,7 @@ exports.resetPassword = async (req, res) => {
         });
 
         if (resetRequest) {
-            const newPasswordURL = `http://localhost:4000/ForgotPassword/newpassword.html?requestId=${requestId}`;
+            const newPasswordURL = `http://54.89.204.195:4000/ForgotPassword/newpassword.html?requestId=${requestId}`;
             res.redirect(newPasswordURL);
         } else {
             res.status(400).json({ error: 'Invalid or expired reset link' });
