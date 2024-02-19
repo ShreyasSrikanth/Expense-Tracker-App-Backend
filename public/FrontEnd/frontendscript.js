@@ -112,7 +112,7 @@ async function fetchExpense(currentFormattedDate, viewExpenses) {
         expDropdownSelect.addEventListener('change', async (event) => {
             limit = parseInt(event.target.value);
             try {
-                const res = await axios.get(`http://54.89.204.195:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}&viewExpenses=${viewExpenses}`, {
+                const res = await axios.get(`http://localhost:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}&viewExpenses=${viewExpenses}`, {
                     headers: {
                         'Authorization': token
                     }
@@ -126,7 +126,7 @@ async function fetchExpense(currentFormattedDate, viewExpenses) {
         nextExpense.addEventListener('click', async () => {
             start = start + limit;
             try {
-                const res = await axios.get(`http://54.89.204.195:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}&viewExpenses=${viewExpenses}`, {
+                const res = await axios.get(`http://localhost:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}&viewExpenses=${viewExpenses}`, {
                     headers: {
                         'Authorization': token
                     }
@@ -148,7 +148,7 @@ async function fetchExpense(currentFormattedDate, viewExpenses) {
             nextExpense.disabled = false;
             if (start >= 0) {
                 try {
-                    const res = await axios.get(`http://54.89.204.195:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}&viewExpenses=${viewExpenses}`, {
+                    const res = await axios.get(`http://localhost:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}&viewExpenses=${viewExpenses}`, {
                         headers: {
                             'Authorization': token
                         }
@@ -163,7 +163,7 @@ async function fetchExpense(currentFormattedDate, viewExpenses) {
             }
         });
 
-        const response = await axios.get(`http://54.89.204.195:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}&viewExpenses=${viewExpenses}`, {
+        const response = await axios.get(`http://localhost:4000/expense/fetchexpense/${currentFormattedDate}?start=${start}&limit=${limit}&viewExpenses=${viewExpenses}`, {
             headers: {
                 'Authorization': token
             }
@@ -222,7 +222,7 @@ function displayExpenses(expenses) {
         deleteButton.textContent = 'Delete';
         deleteButton.addEventListener('click', async () => {
             const token = localStorage.getItem('token');
-            const response = await axios.post('http://54.89.204.195:4000/expense/deleteexpense', {
+            const response = await axios.post('http://localhost:4000/expense/deleteexpense', {
                 ID: expense.id,
                 amount: expense.amount
             }, {
@@ -307,7 +307,7 @@ expenseForm.addEventListener('submit', async (event) => {
     };
 
     var token = localStorage.getItem('token');
-    const response = await axios.post('http://54.89.204.195:4000/expense/storeexpense', {
+    const response = await axios.post('http://localhost:4000/expense/storeexpense', {
         category: expenseCategory,
         amount: expenseAmount,
         desc: expenseDescription,
@@ -343,7 +343,7 @@ if(ispremiumuser ==='true'){
     
         try {
             var token = localStorage.getItem('token')
-            const response = await axios.get(`http://54.89.204.195:4000/expense/download`, {
+            const response = await axios.get(`http://localhost:4000/expense/download`, {
                 headers: {
                     'Authorization': token
                 }
@@ -355,7 +355,7 @@ if(ispremiumuser ==='true'){
             a.download = 'expense.csv';
             a.click();
     
-            const allUrls = await axios.get(`http://54.89.204.195:4000/expense/urls`, {
+            const allUrls = await axios.get(`http://localhost:4000/expense/urls`, {
                 headers: {
                     'Authorization': token
                 }

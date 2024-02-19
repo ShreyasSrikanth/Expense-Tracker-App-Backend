@@ -70,7 +70,7 @@ contentModel.belongsTo(userModel);
 
 sequelize.sync()
   .then(res => {
-    app.listen(process.env.PORT || 4000);
+    app.listen(4000);
   })
   .catch(err => {
     console.log(err);
