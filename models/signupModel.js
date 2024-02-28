@@ -1,33 +1,64 @@
-const Sequelize = require('sequelize');
-const sequelize = require('../util/database');
+const mongoose = require('mongoose');
 
-const items = sequelize.define('Users',{
-    id:{
-        type:Sequelize.INTEGER,
-        autoIncrement : true,
-        allowNull : false,
-        primaryKey: true
+const userSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true
     },
-    name:{
-        type:Sequelize.STRING,
-        autoIncrement : false,
-        allowNull : false,
-        primaryKey: false
+    email: {
+        type: String,
+        required: true,
+        unique: true
     },
-    email:{
-        type:Sequelize.STRING,
-        autoIncrement : false,
-        allowNull : false,
-        primaryKey: false
+    pass: {
+        type: String,
+        required: true
     },
-    pass:{
-        type:Sequelize.STRING,
-        autoIncrement : false,
-        allowNull : false,
-        primaryKey: false
+    isPremiumUser: {
+        type: Boolean,
+        default: false
     },
-    ispremiumuser:Sequelize.BOOLEAN,
-    totalExpense:Sequelize.INTEGER
+    totalExpense: {
+        type: Number,
+        default: 0
+    }
 });
 
-module.exports = items;
+const User = mongoose.model('User', userSchema);
+
+module.exports = User;
+
+
+// const Sequelize = require('sequelize');
+// const sequelize = require('../util/database');
+
+// const items = sequelize.define('Users',{
+//     id:{
+//         type:Sequelize.INTEGER,
+//         autoIncrement : true,
+//         allowNull : false,
+//         primaryKey: true
+//     },
+//     name:{
+//         type:Sequelize.STRING,
+//         autoIncrement : false,
+//         allowNull : false,
+//         primaryKey: false
+//     },
+//     email:{
+//         type:Sequelize.STRING,
+//         autoIncrement : false,
+//         allowNull : false,
+//         primaryKey: false
+//     },
+//     pass:{
+//         type:Sequelize.STRING,
+//         autoIncrement : false,
+//         allowNull : false,
+//         primaryKey: false
+//     },
+//     ispremiumuser:Sequelize.BOOLEAN,
+//     totalExpense:Sequelize.INTEGER
+// });
+
+// module.exports = items;

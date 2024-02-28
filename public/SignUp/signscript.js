@@ -23,12 +23,14 @@ async function sendSignUp(e){
     var displayUsers = await fetchUsers();
     
 
-    const emailExists = await displayUsers.some(element => element.email === email);
+    // const emailExists = await displayUsers.some(element => element.email === email);
 
-    if(emailExists){
-        alert('Email already registered');
-        return; // Stop further execution
-    }
+    // if(emailExists){
+    //     alert('Email already registered');
+    //     return; // Stop further execution
+    // }
+
+    console.log(name,email,pass)
 
     try {
         const response = await axios.post('http://localhost:4000/users/signup', {

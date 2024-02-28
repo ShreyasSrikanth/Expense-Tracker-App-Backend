@@ -2,12 +2,13 @@ const path = require('path');
 const cors = require('cors');
 const express = require('express');
 const fs = require('fs')
+const mongoose = require('mongoose');
 
-const expenseModel = require('./models/expenseModel');
-const userModel = require('./models/signupModel');
-const orderModel = require('./models/purchaseModel');
-const passwordModel = require('./models/forgotpasswordModel');
-const contentModel = require('./models/contentModel');
+// const expenseModel = require('./models/expenseModel');
+// const userModel = require('./models/signupModel');
+// const orderModel = require('./models/purchaseModel');
+// const passwordModel = require('./models/forgotpasswordModel');
+// const contentModel = require('./models/contentModel');
 
 
 const app = express();
@@ -56,23 +57,47 @@ app.get('/:dynamicRoute', (req, res) => {
 
 
 
-userModel.hasMany(expenseModel);
-expenseModel.belongsTo(userModel);
+// userModel.hasMany(expenseModel);
+// expenseModel.belongsTo(userModel);
 
-userModel.hasMany(orderModel);
-orderModel.belongsTo(userModel);
+// userModel.hasMany(orderModel);
+// orderModel.belongsTo(userModel);
 
-userModel.hasMany(passwordModel);
-passwordModel.belongsTo(userModel);
+// userModel.hasMany(passwordModel);
+// passwordModel.belongsTo(userModel);
 
-userModel.hasMany(contentModel);
-contentModel.belongsTo(userModel);
+// userModel.hasMany(contentModel);
+// contentModel.belongsTo(userModel);
 
-sequelize.sync()
-  .then(res => {
+// sequelize.sync()
+//   .then(res => {
+//     app.listen(4000);
+//   })
+//   .catch(err => {
+//     console.log(err);
+//   });
+
+mongoose
+  .connect(
+    'mongodb+srv://sshreyas567:Achinku2330@cluster0.totf0tu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+  )
+  .then(result => {
+    // User.findOne().then(user => {
+    //   if(!user){
+    //     const user = new User({
+    //       name: 'Shreyas',
+    //       email: ' sshreyas567@gmail.com',
+    //       cart: {
+    //         items: []
+    //       }
+    //     });
+    //     user.save();
+    //   }
+    // });
+    console.log("Succesfully connected")
     app.listen(4000);
   })
-  .catch(err => {
+  .catch(err=>{
     console.log(err);
   });
 

@@ -5,8 +5,8 @@ const Router = express.Router();
 const expenseController = require('../controllers/purchaseController');
 const authUser = require('../middlewear/auth');
 
-Router.get('/premiummembership',authUser.authenticate,expenseController.premiumpurchase);
-Router.post('/updateTransaction',authUser.authenticate,expenseController.updateTransactionStatus);
+// Router.get('/premiummembership',authUser.authenticate,expenseController.premiumpurchase);
+// Router.post('/updateTransaction',authUser.authenticate,expenseController.updateTransactionStatus);
 
 
 module.exports = Router;
