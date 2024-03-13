@@ -21,7 +21,8 @@ const userSchema = new mongoose.Schema({
     totalExpense: {
         type: Number,
         default: 0
-    }
+    },
+    expenses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Expense' }],
 });
 
 const User = mongoose.model('User', userSchema);

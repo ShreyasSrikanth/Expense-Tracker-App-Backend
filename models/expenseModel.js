@@ -1,39 +1,69 @@
-const Sequelize = require('sequelize');
-const sequelize = require('../util/database');
+const mongoose = require('mongoose');
 
-const expense = sequelize.define('Expenses',{
-    id:{
-        type:Sequelize.INTEGER,
-        autoIncrement : true,
-        allowNull : false,
-        primaryKey: true
+const ExpenseSchema = new mongoose.Schema({
+    category: {
+        type: String,
+        required: true
     },
-    category:{
-        type:Sequelize.STRING,
-        autoIncrement : false,
-        allowNull : false,
-        primaryKey: false
+    description: {
+        type: String,
+        required: true
     },
-    description:{
-        type:Sequelize.STRING,
-        autoIncrement : false,
-        allowNull : false,
-        primaryKey: false
-    },
-    amount:{
-        type:Sequelize.INTEGER,
-        autoIncrement : false,
-        allowNull : false,
-        primaryKey: false
+    amount: {
+        type: Number,
+        required: true
     },
     createdAt: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        type: Date,
+        default: Date.now
     },
     updatedAt: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        type: Date,
+        default: Date.now
     }
 });
 
-module.exports = expense;
+const Expense = mongoose.model('Expense', ExpenseSchema);
+
+module.exports = Expense;
+
+
+// const Sequelize = require('sequelize');
+// const sequelize = require('../util/database');
+
+// const expense = sequelize.define('Expenses',{
+//     id:{
+//         type:Sequelize.INTEGER,
+//         autoIncrement : true,
+//         allowNull : false,
+//         primaryKey: true
+//     },
+//     category:{
+//         type:Sequelize.STRING,
+//         autoIncrement : false,
+//         allowNull : false,
+//         primaryKey: false
+//     },
+//     description:{
+//         type:Sequelize.STRING,
+//         autoIncrement : false,
+//         allowNull : false,
+//         primaryKey: false
+//     },
+//     amount:{
+//         type:Sequelize.INTEGER,
+//         autoIncrement : false,
+//         allowNull : false,
+//         primaryKey: false
+//     },
+//     createdAt: {
+//         type: Sequelize.DATE,
+//         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+//     },
+//     updatedAt: {
+//         type: Sequelize.DATE,
+//         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+//     }
+// });
+
+// module.exports = expense;

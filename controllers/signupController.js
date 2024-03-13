@@ -8,7 +8,6 @@ require('dotenv').config();
 
 
 exports.postItem = (req, res, next) => {
-    console.log("hello")
     const { name, email, pass, ispremiumuser, totalExpense } = req.body;
     const saltround = 10;
 
@@ -33,6 +32,39 @@ exports.postItem = (req, res, next) => {
     });
 };
 
+exports.getItem = async (req, res, next) => {
+    try {
+        const users = await User.find({}, { pass: 0 }); // Excluding 'pass' field
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to retrieve information' });
+    }
+};
+
+exports.loginUser = async (req, res, next) => {
+    const email = req.body.email;
+    const pass = req.body.pass;
+
+    try {
+        let user = await User.findOne({ email: email });
+        if (user) {
+            const isMatch = await bcrypt.compare(pass, user.pass);
+            if (isMatch) {
+                res.status(200).json({ message: 'Login successful!', token: generateToken(user._id, user.name), ispremiumuser: user.ispremiumuser });
+            } else {
+                res.status(404).json({ message: 'Invalid email or password' });
+            }
+        } else {
+            res.status(404).json({ message: 'Invalid email or password' });
+        }
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to perform login' });
+    }
+};
+
+function generateToken(id,name){
+    return jwt.sign({userId:id,name:name},'shreyassrikanthshreyassrikanthshreyassrikanth')
+}
 
 // exports.postItem = (req, res, next) => {
 //     const name = req.body.name;
@@ -40,7 +72,7 @@ exports.postItem = (req, res, next) => {
 //     const pass = req.body.pass;
 //     const ispremiumuser = req.body.ispremiumuser;
 //      const totalExpense = req.body.totalExpense;
-    
+
 //     const saltround = 10;
 
 //     bcrypt.hash(pass, saltround, async (err, hash) => {

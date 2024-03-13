@@ -20,7 +20,7 @@ async function sendSignUp(e){
     let email = document.getElementById('email').value;
     let pass = document.getElementById('pass').value;
 
-    var displayUsers = await fetchUsers();
+    // var displayUsers = await fetchUsers();
     
 
     // const emailExists = await displayUsers.some(element => element.email === email);
