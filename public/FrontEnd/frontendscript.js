@@ -223,7 +223,7 @@ function displayExpenses(expenses) {
         deleteButton.addEventListener('click', async () => {
             const token = localStorage.getItem('token');
             const response = await axios.post('http://localhost:4000/expense/deleteexpense', {
-                ID: expense.id,
+                ID: expense._id,
                 amount: expense.amount
             }, {
                 headers: {

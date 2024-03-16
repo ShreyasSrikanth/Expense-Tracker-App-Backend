@@ -78,7 +78,7 @@ app.get('/:dynamicRoute', (req, res) => {
 //   });
 
 mongoose.connect(
-  'mongodb+srv://sshreyas567:' + encodeURIComponent('Shreyas@789') + '@cluster0.qkvxyef.mongodb.net/expense?retryWrites=true&w=majority&appName=Cluster0'
+  'mongodb+srv://sshreyas567:' + encodeURIComponent('Shreyas@789') + '@cluster0.spl0zih.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
 )
   .then(result => {
     // User.findOne().then(user => {

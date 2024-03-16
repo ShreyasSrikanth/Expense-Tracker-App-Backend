@@ -13,14 +13,33 @@ const ExpenseSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     createdAt: {
         type: Date,
-        default: Date.now
+        default: () => {
+            const currentDate = new Date();
+            const localTime = new Date(currentDate - currentDate.getTimezoneOffset() * 60000);
+            return localTime.toISOString();
+        }
     },
     updatedAt: {
         type: Date,
-        default: Date.now
+        default: () => {
+            const currentDate = new Date();
+            const localTime = new Date(currentDate - currentDate.getTimezoneOffset() * 60000);
+            return localTime.toISOString();
+        }
     }
+});
+
+// Middleware to update updatedAt field before saving
+ExpenseSchema.pre('save', function(next) {
+    this.updatedAt = new Date();
+    next();
 });
 
 const Expense = mongoose.model('Expense', ExpenseSchema);

@@ -22,7 +22,24 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    expenses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Expense' }],
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now
+    }
+});
+
+// Middleware to update createdAt and updatedAt fields before saving
+userSchema.pre('save', function(next) {
+    const currentDate = new Date();
+    this.updatedAt = currentDate;
+    if (!this.createdAt) {
+        this.createdAt = currentDate;
+    }
+    next();
 });
 
 const User = mongoose.model('User', userSchema);

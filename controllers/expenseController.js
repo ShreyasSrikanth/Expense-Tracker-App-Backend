@@ -1,5 +1,7 @@
 const Expense = require('../models/expenseModel');
-const Users = require('../models/signupModel');
+const User = require('../models/signupModel');
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 const Content = require('../models/contentModel');
 
 const { post } = require('../routes/signupRoute');
@@ -15,6 +17,103 @@ let day;
 let month;
 let year;
 let viewExpenses;
+
+
+exports.postExpense = async (req, res, next) => {
+    console.log("hello")
+    const category = req.body.category;
+    const amount = req.body.amount;
+    const desc = req.body.desc;
+
+    try {
+        // Find the user by their ID
+        console.log(req.user)
+        const user = await User.findOne({ _id: req.user._id });
+        console.log("user====>",user)
+        
+        // Check if the user exists
+        if (!user) {
+            return res.status(500).json({ message: 'User does not exist to store the expense' });
+        }
+
+        // Update the user's total expense
+        user.totalExpense += amount;
+        await user.save();
+
+        // Create a new expense
+        const expense = new Expense({
+            category: category,
+            description: desc,
+            amount: amount,
+            userId: new ObjectId(req.user._id)
+        });
+
+        // Save the expense
+        await expense.save();
+
+        // Respond with success message
+        return res.status(200).json({ message: 'Information is successfully stored' });
+    } catch (err) {
+        // Handle errors
+        console.error(err);
+        return res.status(500).json({ error: 'Failed to store information' });
+    }
+};
+
+exports.getExpense = async (req, res, next) => {
+    try {
+        const dateString = req.params.date;
+        start = parseInt(req.query.start);
+        limit = parseInt(req.query.limit);
+
+        const id = req.user._id;
+
+       const idString = `${id}`;
+
+        viewExpenses = req.query.viewExpenses
+        console.log(idString,viewExpenses)
+        
+        const date = new Date(dateString);
+
+        day = date.getDate();
+        month = date.toLocaleString('default', { month: 'short' });
+        year = date.getFullYear();
+
+        const expenses = await UserServices.fetchExpense(idString, start, limit, day, month, year, viewExpenses);
+
+        res.json(expenses);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to retrieve information' });
+    }
+};
+
+exports.deleteExpense = async (req, res, next) => {
+    try {
+        const userId = new ObjectId(req.user._id); // Assuming you're using JWT for authentication
+        const expenseId = new ObjectId(req.body.ID);
+        const amount = req.body.amount;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.totalExpense -= amount;
+        await user.save();
+
+        const deletedExpense = await Expense.findOneAndDelete({ _id: expenseId});
+        console.log("==========>",deletedExpense)
+        if (!deletedExpense) {
+            return res.status(404).json({ error: 'No expense found with the given ID' });
+        }
+
+        res.status(200).json({ message: 'Expense deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to delete expense' });
+    }
+};
+
 
 // exports.downloadexpense = async (req, res, next) => {
 //     try {
