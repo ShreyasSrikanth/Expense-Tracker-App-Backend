@@ -13,7 +13,7 @@ Router.get('/fetchAllexpense',expenseController.getAllExpense);
 
 Router.post('/deleteexpense',authUser.authenticate,expenseController.deleteExpense);
 
-// Router.get('/download',authUser.authenticate,expenseController.downloadexpense)
+Router.get('/download',authUser.authenticate,expenseController.downloadexpense)
 
 // Router.get('/urls',authUser.authenticate,expenseController.fetchUrls)
 

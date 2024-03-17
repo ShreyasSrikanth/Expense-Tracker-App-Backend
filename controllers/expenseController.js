@@ -3,6 +3,7 @@ const User = require('../models/signupModel');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const Content = require('../models/contentModel');
+const moment = require('moment-timezone');
 
 const { post } = require('../routes/signupRoute');
 const { where } = require('sequelize');
@@ -130,6 +131,30 @@ exports.getAllExpense = async (req, res, next) => {
     }
 };
 
+exports.downloadexpense = async (req, res, next) => {
+    try {
+        // Fetch expenses based on user ID and other parameters
+        const expenses = await UserServices.fetchExpense(req.user._id, start, limit, day, month, year, viewExpenses);
+
+        // Convert expenses to JSON string
+        const stringifyExpenses = JSON.stringify(expenses);
+
+        // Upload expenses to S3
+        const userId = req.user._id;
+        const filename = `Expense_${userId}_${moment().format('YYYYMMDD_HHmmss')}.txt`; // Use a meaningful filename
+        const fileUrl = await S3services.uploadToS3(stringifyExpenses, filename);
+
+        console.log(fileUrl)
+
+        // Save file URL to MongoDB
+        await Content.create({ fileUrl, userId: req.user.userId });
+
+        return res.status(200).json({ fileUrl, success: true });
+    } catch (error) {
+        console.error('Error downloading expenses:', error);
+        res.status(500).json({ error: 'Failed to download expenses' });
+    }
+};
 
 
 // exports.downloadexpense = async (req, res, next) => {
