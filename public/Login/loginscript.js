@@ -45,6 +45,7 @@ document.getElementById('forgotpassword').addEventListener('click', function(e){
           });
           
           if (response.status === 200) {
+            console.log("=============>",response.data.ispremiumuser)
             alert(response.data.message);
             localStorage.setItem('ispremiumuser',response.data.ispremiumuser)
             localStorage.setItem('token',response.data.token)

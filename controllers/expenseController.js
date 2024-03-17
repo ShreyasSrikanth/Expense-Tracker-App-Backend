@@ -115,6 +115,23 @@ exports.deleteExpense = async (req, res, next) => {
 };
 
 
+exports.getAllExpense = async (req, res, next) => {
+    try {
+        const expenses = await User.find({})
+            .select('id name totalExpense') // Select the fields you want to retrieve
+            .sort({ totalExpense: -1 }) // Sort by totalExpense in descending order
+            .exec();
+
+            console.log("=========>",expenses)
+
+        res.status(200).json(expenses);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to retrieve information' });
+    }
+};
+
+
+
 // exports.downloadexpense = async (req, res, next) => {
 //     try {
 

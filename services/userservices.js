@@ -1,14 +1,19 @@
 const moment = require('moment-timezone');
+const mongoose = require('mongoose');
 const Expense = require('../models/expenseModel');
+const ObjectId = mongoose.Types.ObjectId;
 
 exports.fetchExpense = async (id, start, limit, day, month, year, viewExpenses) => {
     try {
         const parsedDay = parseInt(day);
         const parsedYear = parseInt(year);
+        console.log("------------->", new ObjectId(id));
 
-        let query = { userId: id };
+        const userId = new ObjectId(id);
 
-        console.log(id)
+        let query = { userId: userId };
+
+        console.log(id);
 
         const monthMap = {
             Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6,
@@ -19,28 +24,26 @@ exports.fetchExpense = async (id, start, limit, day, month, year, viewExpenses) 
         const parsedMonth = parseInt(monthNumber);
 
         // Construct the date in IST for the given day, month, and year
-        const gt = moment.tz([parsedYear, parsedMonth - 1, parsedDay], 'Asia/Kolkata').toDate();
-        const lt = moment.tz([parsedYear, parsedMonth - 1, parsedDay + 1 ], 'Asia/Kolkata').toDate();
+        const gt = moment.tz([parsedYear, parsedMonth - 1, parsedDay], 'Asia/Kolkata').startOf('day').toDate();
+        const lt = moment.tz([parsedYear, parsedMonth - 1, parsedDay], 'Asia/Kolkata').endOf('day').toDate();
 
         console.log("Start time for query:", gt);
-        console.log("end time for query:", lt);
+        console.log("End time for query:", lt);
 
         if (viewExpenses === "daily") {
             query.createdAt = {
-                $gte: gt, // Greater than or equal to start of today
-                $lt: lt  // Less than start of tomorrow
+                $gte: gt,
+                $lt: lt
             };
         } else if (viewExpenses === "monthly") {
-            
             query.createdAt = {
-                $gte: new Date(parsedYear, parsedMonth - 1, 1), 
-                $lt: new Date(parsedYear, parsedMonth, 1) 
+                $gte: new Date(parsedYear, parsedMonth - 1, 1),
+                $lt: new Date(parsedYear, parsedMonth, 1)
             };
         } else if (viewExpenses === "yearly") {
-            
             query.createdAt = {
-                $gte: new Date(parsedYear, 0, 1), 
-                $lt: new Date(parsedYear + 1, 0, 1) 
+                $gte: new Date(parsedYear, 0, 1),
+                $lt: new Date(parsedYear + 1, 0, 1)
             };
         } else {
             throw new Error('Invalid viewExpenses value');
@@ -49,13 +52,10 @@ exports.fetchExpense = async (id, start, limit, day, month, year, viewExpenses) 
         console.log("Query:", query);
 
         const expenses = await Expense.find(query)
-        .skip(start)
-        .limit(limit)
-        .sort({ createdAt: -1 })
-        .exec();
-
-    console.log("Expenses:", expenses);
-            
+            .skip(start)
+            .limit(limit)
+            .sort({ createdAt: -1 })
+            .exec();
 
         console.log("Expenses:", expenses);
 
